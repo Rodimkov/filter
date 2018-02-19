@@ -28,11 +28,13 @@ namespace Lab_1_Filter
                 image = new Bitmap(dialog.FileName);
                 pictureBox1.Image = image;
                 pictureBox1.Refresh();
+                pictureBox2.Image = image;
+                pictureBox2.Refresh();
             }
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            SaveFileDialog dialog = new SaveFileDialog();
+            /*SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter = "JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
             saveFileDialog1.Title = "Save an Image File";
             //dialog.OpenFile();
@@ -61,7 +63,7 @@ namespace Lab_1_Filter
                         break;
                 }
                 fs.Close();
-            }
+              }*/
 
         }
 
@@ -142,6 +144,18 @@ namespace Lab_1_Filter
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
 
+        }
+
+        private void собельToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new Sobel();
+            backgroundWorker1.RunWorkerAsync(filter); 
+        }
+
+        private void лСДToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new SobelLSD();
+            backgroundWorker1.RunWorkerAsync(filter); 
         }
 
     }

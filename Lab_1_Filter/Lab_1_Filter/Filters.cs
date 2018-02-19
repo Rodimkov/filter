@@ -70,7 +70,7 @@ namespace Lab_1_Filter
                 for (int k = -radiusX; k <= radiusX; k++)
                 {
                     int idX = Clamp(x + k, 0, sourseImage.Width - 1);
-                    int idY = Clamp(y + 1, 0, sourseImage.Height - 1);
+                    int idY = Clamp(y + l, 0, sourseImage.Height - 1);
                     Color neighbotColor = sourseImage.GetPixel(idX, idY);
                     resultR += neighbotColor.R * kernel[k + radiusX, l + radiusY];
                     resultG += neighbotColor.G * kernel[k + radiusX, l + radiusY];
@@ -160,25 +160,116 @@ namespace Lab_1_Filter
     }
     class Sobel : MatrixFilter
     {
+        public float[,] SobelX;
+        public float[,] SobelY;
+
         public Sobel()
         {
-            int sizeX = 3;
-            int sizeY = 3;
-            kernel = new float[sizeX, sizeY];
-            int[,] SobelX = new int[3, 3] { {-1,0,1},
-                                          {-2,0,2},
-                                          {-1,0,1}
+            SobelX = new float[3, 3] { {-1 , 0 , 1 },
+                                     {-2 , 0 , 2 },
+                                     {-1 , 0 , 1 }
                                            };
 
-            int[,] SobelY = new int[3, 3] { {-1,-2,-1},
-                                          {0,0,0},
-                                          {1,2,1}
+            SobelY = new float[3, 3] { {-1 ,-2 ,-1 },
+                                     { 0 , 0 , 0 },
+                                     { 1 , 2 , 1 }
                                            };
-            for (int i = 0; i < sizeX; i++)
-                for (int j = 0; j < sizeY; j++)
-                    kernel[i, j] = 1.0f / (float)(sizeX * sizeY);
+        }
+        protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
+        {
+            int radiusX = 3 / 2;
+            int radiusY = 3 / 2;
+            float resultRx = 0;
+            float resultGx = 0;
+            float resultBx = 0;
+            float resultRy = 0;
+            float resultGy = 0;
+            float resultBy = 0;
+            for (int l = -radiusY; l <= radiusY; l++)
+                for (int k = -radiusX; k <= radiusX; k++)
+                {
+                    int idX = Clamp(x + k, 0, sourseImage.Width - 1);
+                    int idY = Clamp(y + l, 0, sourseImage.Height - 1);
+                    Color neighbotColor = sourseImage.GetPixel(idX, idY);
+                    resultRx += neighbotColor.R * SobelX[k + radiusX, l + radiusY];
+                    resultGx += neighbotColor.G * SobelX[k + radiusX, l + radiusY];
+                    resultBx += neighbotColor.B * SobelX[k + radiusX, l + radiusY];
+                }
+            for (int l = -radiusY; l <= radiusY; l++)
+                for (int k = -radiusX; k <= radiusX; k++)
+                {
+                    int idX = Clamp(x + k, 0, sourseImage.Width - 1);
+                    int idY = Clamp(y + l, 0, sourseImage.Height - 1);
+                    Color neighbotColor = sourseImage.GetPixel(idX, idY);
+                    resultRy += neighbotColor.R * SobelY[k + radiusX, l + radiusY];
+                    resultGy += neighbotColor.G * SobelY[k + radiusX, l + radiusY];
+                    resultBy += neighbotColor.B * SobelY[k + radiusX, l + radiusY];
+                }
+            int sum = (int)Math.Sqrt(resultRx * resultRx + resultRy * resultRy) + (int)Math.Sqrt(resultGx * resultGx + resultGy * resultGy) + (int)Math.Sqrt(resultBx * resultBx + resultBy * resultBy);
+            return Color.FromArgb(
+                Clamp(sum, 0, 255),
+                Clamp(sum, 0, 255),
+                Clamp(sum, 0, 255)
+                );
         }
     }
+
+        class SobelLSD : MatrixFilter
+        {
+            public float[,] SobelX;
+            public float[,] SobelY;
+
+            public SobelLSD()
+            {
+                SobelX = new float[3, 3] { {-1 , 0 , 1 },
+                                              {-2 , 0 , 2 },
+                                              {-1 , 0 , 1 }
+                                           };
+
+               SobelY = new float[3, 3] { {-1 ,-2 ,-1 },
+                                         { 0 , 0 , 0 },
+                                         { 1 , 2 , 1 }
+                                           };
+            }
+
+            protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
+            {
+                int radiusX = 3 / 2;
+                int radiusY = 3 / 2;
+                float resultRx = 0;
+                float resultGx = 0;
+                float resultBx = 0;
+                float resultRy = 0;
+                float resultGy = 0;
+                float resultBy = 0;
+                for (int l = -radiusY; l <= radiusY; l++)
+                    for (int k = -radiusX; k <= radiusX; k++)
+                    {
+                        int idX = Clamp(x + k, 0, sourseImage.Width - 1);
+                        int idY = Clamp(y + l, 0, sourseImage.Height - 1);
+                        Color neighbotColor = sourseImage.GetPixel(idX, idY);
+                        resultRx += neighbotColor.R * SobelX[k + radiusX, l + radiusY];
+                        resultGx += neighbotColor.G * SobelX[k + radiusX, l + radiusY];
+                        resultBx += neighbotColor.B * SobelX[k + radiusX, l + radiusY];
+                    }
+                for (int l = -radiusY; l <= radiusY; l++)
+                    for (int k = -radiusX; k <= radiusX; k++)
+                    {
+                        int idX = Clamp(x + k, 0, sourseImage.Width - 1);
+                        int idY = Clamp(y + l, 0, sourseImage.Height - 1);
+                        Color neighbotColor = sourseImage.GetPixel(idX, idY);
+                        resultRy += neighbotColor.R * SobelY[k + radiusX, l + radiusY];
+                        resultGy += neighbotColor.G * SobelY[k + radiusX, l + radiusY];
+                        resultBy += neighbotColor.B * SobelY[k + radiusX, l + radiusY];
+                    }
+                return Color.FromArgb(
+                    Clamp((int)Math.Sqrt(resultRx * resultRx + resultRy * resultRy), 0, 255),
+                    Clamp((int)Math.Sqrt(resultGx * resultGx + resultGy * resultGy), 0, 255),
+                    Clamp((int)Math.Sqrt(resultBx * resultBx + resultBy * resultBy), 0, 255)
+                    );
+            }
+         }
+
     class Sharpness : MatrixFilter
     {
         public Sharpness()
@@ -187,3 +278,4 @@ namespace Lab_1_Filter
         }
     }
 }
+
