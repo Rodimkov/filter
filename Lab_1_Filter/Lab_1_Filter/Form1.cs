@@ -15,17 +15,23 @@ namespace Lab_1_Filter
         Bitmap image;
         public Form1()
         {
+
             InitializeComponent();
+            NewPosition();
         }
+
+        Stack<Bitmap> stimage = new Stack<Bitmap>();
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "Image Files | *.png; *.jpg; *.bmp; | ALL Files (*.*) | *.*";
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 image = new Bitmap(dialog.FileName);
+                //stimage.Push(image);
                 pictureBox1.Image = image;
                 pictureBox1.Refresh();
                 pictureBox2.Image = image;
@@ -34,36 +40,14 @@ namespace Lab_1_Filter
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            /*SaveFileDialog dialog = new SaveFileDialog();
-            dialog.Filter = "JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
-            saveFileDialog1.Title = "Save an Image File";
-            //dialog.OpenFile();
-            dialog.ShowDialog();
+            SaveFileDialog savedialog = new SaveFileDialog();
 
-            //if (saveFileDialog1.FileName != "")
+            savedialog.Filter = "Image Files(*.BMP)|*.BMP|Image Files(*.JPG)|*.JPG|Image Files(*.GIF)|*.GIF|Image Files(*.PNG)|*.PNG|All files (*.*)|*.*";
+            if (savedialog.ShowDialog() == DialogResult.OK)
             {
-                label1.Text = "упс";
-                System.IO.FileStream fs =
-                   (System.IO.FileStream)dialog.OpenFile();
-                switch (saveFileDialog1.FilterIndex)
-                {
-                    case 1:
-                        this.button2.Image.Save(fs,
-                           System.Drawing.Imaging.ImageFormat.Jpeg);
-                        break;
+                image.Save(savedialog.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
+            }
 
-                    case 2:
-                        this.button2.Image.Save(fs,
-                           System.Drawing.Imaging.ImageFormat.Bmp);
-                        break;
-
-                    case 3:
-                        this.button2.Image.Save(fs,
-                           System.Drawing.Imaging.ImageFormat.Gif);
-                        break;
-                }
-                fs.Close();
-              }*/
 
         }
 
@@ -82,7 +66,10 @@ namespace Lab_1_Filter
         {
             Bitmap newImage = ((Filters)e.Argument).processImage(image, backgroundWorker1);
             if (backgroundWorker1.CancellationPending != true)
+            {
+                stimage.Push(image);
                 image = newImage;
+            }
         }
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -94,6 +81,7 @@ namespace Lab_1_Filter
         {
             if (!e.Cancelled)
             {
+
                 pictureBox1.Image = image;
                 pictureBox1.Refresh();
             }
@@ -158,5 +146,131 @@ namespace Lab_1_Filter
             backgroundWorker1.RunWorkerAsync(filter); 
         }
 
+        private void тиснениеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new embossing();
+            backgroundWorker1.RunWorkerAsync(filter); 
+        }
+
+        private void резкость2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new Sharpness2();
+            backgroundWorker1.RunWorkerAsync(filter); 
+        }
+
+        private void медианToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+             Filters filter = new median();
+            backgroundWorker1.RunWorkerAsync(filter); 
+        }
+
+        private void переносToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new transference();
+            backgroundWorker1.RunWorkerAsync(filter); 
+        }
+
+        private void стеклоToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new Glass();
+            backgroundWorker1.RunWorkerAsync(filter); 
+        }
+
+
+        private void серыйМирToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new GrayWorld();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void линейноеРастяжениеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new line();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+            NewPosition();
+        }
+
+        void NewPosition()
+        {
+            button1.Location = new Point(this.Width  - 150, this.Height  - 100);
+            button2.Location = new Point(this.Width - 250, this.Height - 100);
+            progressBar1.Width = this.Width - 400;
+            progressBar1.Location = new Point(20, this.Height - 100);
+            int k = 150;
+            int l = -130;
+            pictureBox1.Width = this.Width/2 - k ;
+            pictureBox1.Height = this.Height/2 - l;
+
+            pictureBox1.Location = new Point( 50 , 70);
+            //pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox2.Width = this.Width/2 - k;
+            pictureBox2.Height = this.Height/2 - l;
+
+            pictureBox2.Location = new Point(this.Width / 2 + 70, 70);
+            //pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
+
+
+            label1.Text = Convert.ToString(this.Height) + ' ' +  Convert.ToString(this.Width);
+            label2.Text = Convert.ToString(button1.Location.X) + ' ' + Convert.ToString(button1.Location.Y);
+            label3.Text = Convert.ToString(button2.Location.X) + ' ' + Convert.ToString(button2.Location.Y);
+
+
+        }
+
+        private void menuStrip1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            
+        }
+
+        private void menuStrip1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Z && e.Modifiers == Keys.Control)
+            {
+                label1.Text = "hello";
+            }
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ( e.Modifiers == Keys.Alt)//alt+D
+            {
+                MessageBox.Show("ALT+D");
+            }
+        }
+
+        private void button1_KeyDown(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                if (e.KeyCode == Keys.Z && e.Modifiers == Keys.Control)
+                {
+                    image = stimage.Pop();
+                    pictureBox1.Image = image;
+                    pictureBox1.Refresh();
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+            }
+        }
+
+        private void ужасToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new Dilation();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void хмToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new Erosion();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
     }
 }
