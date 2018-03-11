@@ -306,6 +306,14 @@ namespace Lab_1_Filter
             backgroundWorker1.RunWorkerAsync(filter);
         }
 
+        private void topHatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            KernelInsert();
+
+            Filters filter = new TopHat(kernel);
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
 
     }
 }
