@@ -106,16 +106,15 @@ namespace Lab_1_Filter
     //стекло
     class Glass : Filters
     {
+        private Random rand = new Random(DateTime.Now.Millisecond);
         protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
         {
-            int k, l;
-
-            Random rand = new Random();
-
+            int k;
+            int l;
             k = Clamp((int)(x + ((rand.NextDouble() - 0.5) * 10)), 0, sourseImage.Width - 1);
             l = Clamp((int)(y + ((rand.NextDouble() - 0.5) * 10)), 0, sourseImage.Height - 1);
 
-            Color sourceColor = sourseImage.GetPixel(k, y);
+            Color sourceColor = sourseImage.GetPixel(k, l);
             Color resultColor = Color.FromArgb(sourceColor.R, sourceColor.G, sourceColor.B);
 
             return resultColor;
