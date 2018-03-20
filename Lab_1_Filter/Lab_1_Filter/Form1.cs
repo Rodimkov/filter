@@ -314,6 +314,11 @@ namespace Lab_1_Filter
             backgroundWorker1.RunWorkerAsync(filter);
         }
 
+        private void invertToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new Invert();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
 
     }
 }

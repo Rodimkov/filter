@@ -816,4 +816,22 @@ Clamp((int)(sColor.B - sourceColor.B), 0, 255));
             return resImage;
         }
     }
+
+    // доп задание  (перевод близких к красному в черно-белое)
+    class Invert : Filters
+    {
+        protected override Color calculateNewPixelColor(Bitmap sourseImage, int x, int y)
+        {
+            Color sourceColor = sourseImage.GetPixel(x, y);
+            Color resualColor = sourceColor;
+            int Intensity;
+            if ((sourceColor.R > 200) && (sourceColor.G >= 0) && (sourceColor.G <= 100) && (sourceColor.B >= 0) && (sourceColor.B <= 100))   // && (sourceColor.G > 25) && (sourceColor.G < 75) && (sourceColor.B > 25) && (sourceColor.R < 75)
+            {
+                Intensity = (int)(0.36 * sourceColor.R + 0.53 * sourceColor.G + 0.11 * sourceColor.B);
+                resualColor = Color.FromArgb(Intensity, Intensity, Intensity);
+            }
+            return resualColor;
+        }
+    }
+
 }
